@@ -1,0 +1,17 @@
+# Python virtual environment
+
+venv/
+
+# Data files
+
+*.csv
+
+# Model and scaler files
+
+*.pkl
+*.joblib
+
+# Python cache
+
+pycache/
+*.pyc
