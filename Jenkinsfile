@@ -13,38 +13,38 @@ pipeline {
             }
         }
 
-        stage('Version Control Setup') {
+        stage('Setup Workspace') {
             steps {
                 script {
+                    // This pulls the code exactly like Step 1 in your lab document
                     checkout([$class: 'GitSCM', 
                         branches: [[name: "*/main"]], 
                         userRemoteConfigs: [[url: "${env.REPO_URL}"]]
                     ])
-                    // Use 'bat' for Windows commands
-                    bat "git branch -m ${env.BRANCH_NAME}"
+                    
+                    // Instead of renaming, we ensure we are on a branch
+                    bat "git checkout -b ${env.BRANCH_NAME} || git checkout ${env.BRANCH_NAME}"
                 }
             }
         }
 
-        stage('File Manipulation') {
+        stage('Lab 2 Tasks') {
             steps {
-                // 'echo' works in Batch too
+                // Step 4: echo content into Lab2.txt
                 bat 'echo "This is the end..... of Lab1" >> Lab2.txt'
-            }
-        }
-
-        stage('Git Operations') {
-            steps {
-                script {
-                    bat "git add Lab2.txt"
-                    bat "git commit -m \"Automated commit: Added Lab2.txt via Jenkins\""
-                }
+                
+                // Step 5 & 7: git status and add
+                bat "git status"
+                bat "git add Lab2.txt"
+                
+                // Step 8: git commit
+                bat 'git commit -m "Added Lab2.txt for Lab2 completion"'
             }
         }
 
         stage('Verification') {
             steps {
-                bat "git status"
+                // Step 12 & 14: git log and show
                 bat "git log --oneline"
                 bat "git show"
             }
