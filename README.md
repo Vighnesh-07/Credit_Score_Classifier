@@ -20,7 +20,8 @@ requirements.txt: A list of all Python libraries required.
 1. Clone the Repository
 
 git clone [https://github.com/Vighnesh-07/Credit_Score_Classifier.git](https://github.com/YOUR-USERNAME/YOUR-REPOSITORY-NAME.git)
-cd YOUR-REPOSITORY-NAME
+
+cd Credit_Score_Classifier
 
 
 2. Set Up a Virtual Environment (Recommended)
