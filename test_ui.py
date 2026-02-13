@@ -4,36 +4,30 @@ from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 import time
 
-def run_selenium_test():
-    # Setup for Jenkins (Headless mode)
+def test_credit_app_ui():
+    # 1. Setup Chrome Options (Headless for Jenkins)
     options = webdriver.ChromeOptions()
     options.add_argument("--headless") 
     
-    # Initialize Driver 
+    # 2. Initialize WebDriver Interface
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
     
     try:
-        # Navigate to Application 
+        # 3. Navigate to App URL
         driver.get("http://localhost:8501")
-        time.sleep(5) # Wait for Streamlit to render
+        time.sleep(5) # Wait for Streamlit rendering
         
-        # 1. Verify Page Title 
-        print("Page Title is:", driver.title)
+        # 4. Assert Title (Testing different elements)
         assert "Credit" in driver.title
-        
-        # 2. Find and Verify Main Header 
+        print("Success: Title verification passed!")
+
+        # 5. Use Locator to find Header
         header = driver.find_element(By.TAG_NAME, "h1")
-        print("Found Header:", header.text)
-        assert len(header.text) > 0
+        print(f"Success: Found Header: {header.text}")
         
-        print("Selenium UI Test Passed Successfully!")
-        
-    except Exception as e:
-        print("Test Failed:", e)
-        exit(1)
     finally:
-        # Close Browser 
+        # 6. Close Browser Session
         driver.quit()
 
 if __name__ == "__main__":
-    run_selenium_test()
+    test_credit_app_ui()
