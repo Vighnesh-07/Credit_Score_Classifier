@@ -4,9 +4,7 @@ pipeline {
     environment {
         REPO_URL = 'https://github.com/Vighnesh-07/Credit_Score_Classifier.git'
         BRANCH_NAME = 'Lab2'
-        // Using your project name as the image tag [cite: 620]
         IMAGE_NAME = 'credit-classifier-app' 
-        // Define port: 8081 avoids conflict with Jenkins 8080 [cite: 627]
         PORT = '8081' 
     }
 
@@ -39,26 +37,23 @@ pipeline {
             }
         }
 
-        // --- NEW STAGES FOR EXPERIMENT 7 ---
-
         stage('Build Docker Image') {
             steps {
-                // Creates a read-only snapshot (Image) from the Dockerfile [cite: 489, 575, 620]
+                // Creates a read-only snapshot (Image) from the Dockerfile
                 bat "docker build -t ${env.IMAGE_NAME} ."
             }
         }
 
         stage('Run Docker Container') {
             steps {
-                // Starts a live instance of the image (Container) [cite: 490, 579, 626]
-                // -d runs in background; -p maps host port to container port [cite: 317-318, 626]
+                // Starts a live instance of the image (Container)
                 bat "docker run -d -p ${env.PORT}:80 ${env.IMAGE_NAME}"
             }
         }
         
         stage('Verify Container') {
             steps {
-                // Lists running containers to prove success [cite: 330, 639]
+                // Lists running containers to prove success
                 bat "docker ps"
             }
         }
@@ -66,7 +61,7 @@ pipeline {
 
     post {
         always {
-            echo "Experiment 7: Docker lifecycle stage completed." [cite: 532]
+            echo "Experiment 7: Docker lifecycle stage completed."
         }
     }
 }
