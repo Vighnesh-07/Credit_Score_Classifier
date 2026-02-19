@@ -1,67 +1,51 @@
 pipeline {
-    agent any
+    agent any 
 
     environment {
-        REPO_URL = 'https://github.com/Vighnesh-07/Credit_Score_Classifier.git'
-        BRANCH_NAME = 'Lab2'
-        IMAGE_NAME = 'credit-classifier-app' 
-        PORT = '8081' 
+        // Replace 'myapp' with your project name [cite: 621]
+        IMAGE_NAME = "Credit_Score_Classifier"
+        // Maps Jenkins/Host port to Nginx/Container port [cite: 626-627]
+        PORT_MAPPING = "8081:80" 
     }
 
     stages {
-        stage('Cleanup') {
+        stage('Checkout SCM') {
             steps {
-                deleteDir()
-            }
-        }
-
-        stage('Setup Workspace') {
-            steps {
-                script {
-                    checkout([$class: 'GitSCM', 
-                        branches: [[name: "*/main"]], 
-                        userRemoteConfigs: [[url: "${env.REPO_URL}"]]
-                    ])
-                    bat "git checkout -b ${env.BRANCH_NAME} || git checkout ${env.BRANCH_NAME}"
-                }
-            }
-        }
-
-        stage('Lab 2 Tasks') {
-            steps {
-                bat 'echo "This is the end..... of Lab1" >> Lab2.txt'
-                bat 'git config user.email "vighnesh.waman@vit.edu.in"'
-                bat 'git config user.name "Vighnesh Somnath Waman"'
-                bat 'git add Lab2.txt'
-                bat 'git commit -m "Lab2 tasks and Docker prep"'
+                // Jenkins automatically pulls your Dockerfile and code here [cite: 633-635]
+                git branch: 'Lab2', url: 'https://github.com/Vighnesh-07/Credit_Score_Classifier.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                // Creates the image snapshot from the Dockerfile instructions
+                // Creates a read-only snapshot (Image) from your Dockerfile [cite: 489, 620]
                 bat "docker build -t ${env.IMAGE_NAME} ."
             }
         }
 
-        stage('Run Container') {
+        stage('Run Docker Container') {
             steps {
-                // Starts the container and maps port 8081 to internal port 80
-                bat "docker run -d -p ${env.PORT}:80 ${env.IMAGE_NAME}"
+                // Stops any existing container with the same name to prevent port conflicts
+                bat "docker stop ${env.IMAGE_NAME} || rem"
+                bat "docker rm ${env.IMAGE_NAME} || rem"
+                
+                // Starts a live instance (Container) in background mode [cite: 490, 626]
+                bat "docker run -d -p ${env.PORT_MAPPING} --name ${env.IMAGE_NAME} ${env.IMAGE_NAME}"
             }
         }
-        
+
         stage('Verify Container') {
             steps {
-                // Proves the container is live and running
+                // Lists running containers to prove the lifecycle is in 'Running' state [cite: 541, 639]
                 bat "docker ps"
+                echo "Verify at: http://localhost:8081" [cite: 640]
             }
         }
     }
 
     post {
         always {
-            echo "Experiment 7: Docker lifecycle stage completed."
+            echo "Experiment 7: Docker lifecycle stage completed." [cite: 583]
         }
     }
 }
