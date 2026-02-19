@@ -1,67 +1,38 @@
 pipeline {
-    agent any
+    agent any 
 
     environment {
-        REPO_URL = 'https://github.com/Vighnesh-07/Credit_Score_Classifier.git'
-        BRANCH_NAME = 'Lab2'
-        IMAGE_NAME = 'credit-classifier-app' 
-        PORT = '8081' 
+        // Update these paths to match YOUR laptop's actual installation folders
+        DOCKER_PATH = 'C:\\Program Files\\Docker\\Docker\\resources\\bin'
+        IMAGE_NAME = 'credit-classifier-app'
     }
 
     stages {
-        stage('Cleanup') {
-            steps {
-                deleteDir()
-            }
-        }
-
-        stage('Setup Workspace') {
-            steps {
-                script {
-                    checkout([$class: 'GitSCM', 
-                        branches: [[name: "*/main"]], 
-                        userRemoteConfigs: [[url: "${env.REPO_URL}"]]
-                    ])
-                    bat "git checkout -b ${env.BRANCH_NAME} || git checkout ${env.BRANCH_NAME}"
-                }
-            }
-        }
-
-        stage('Lab 2 Tasks') {
-            steps {
-                bat 'echo "This is the end..... of Lab1" >> Lab2.txt'
-                bat 'git config user.email "vighnesh.waman@vit.edu.in"'
-                bat 'git config user.name "Vighnesh Somnath Waman"'
-                bat 'git add Lab2.txt'
-                bat 'git commit -m "Lab2 tasks and Docker prep"'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
-                // Creates a read-only snapshot (Image) from the Dockerfile
-                bat "docker build -t ${env.IMAGE_NAME} ."
+                // Using the full path to ensure Docker is found [cite: 583, 620]
+                bat """ "${env.DOCKER_PATH}\\docker.exe" build -t ${env.IMAGE_NAME} . """
             }
         }
 
-        stage('Run Docker Container') {
+        stage('Run Container') {
             steps {
-                // Starts a live instance of the image (Container)
-                bat "docker run -d -p ${env.PORT}:80 ${env.IMAGE_NAME}"
+                // -d runs in background, -p maps port 8081 to 80 [cite: 317, 540, 626]
+                bat """ "${env.DOCKER_PATH}\\docker.exe" run -d -p 8081:80 ${env.IMAGE_NAME} """
             }
         }
         
         stage('Verify Container') {
             steps {
-                // Lists running containers to prove success
-                bat "docker ps"
+                // Lists running containers as proof for your lab report [cite: 331, 639]
+                bat """ "${env.DOCKER_PATH}\\docker.exe" ps """
             }
         }
     }
 
     post {
         always {
-            echo "Experiment 7: Docker lifecycle stage completed."
+            echo "Experiment 7: Docker lifecycle stage completed." [cite: 583]
         }
     }
 }
