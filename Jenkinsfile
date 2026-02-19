@@ -25,12 +25,12 @@ pipeline {
 
         stage('Run Docker Container') {
             steps {
-                // Safely stops and removes old versions to prevent port errors
-                bat "docker stop ${env.IMAGE_NAME} || rem"
-                bat "docker rm ${env.IMAGE_NAME} || rem"
+                // The '|| exit 0' tells Jenkins to ignore the error if the container doesn't exist
+                bat "docker stop credit-score-app || exit 0"
+                bat "docker rm credit-score-app || exit 0"
                 
-                // Launches the container in background mode
-                bat "docker run -d -p ${env.PORT_MAPPING} --name ${env.IMAGE_NAME} ${env.IMAGE_NAME}"
+                // Now start the fresh container [cite: 626]
+                bat "docker run -d -p 8081:80 --name credit-score-app credit-score-app"
             }
         }
 
